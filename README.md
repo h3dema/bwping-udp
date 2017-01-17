@@ -11,6 +11,11 @@ not collected by classic tools (i.e. Iperf and others).
 ##For the impatient
 
 Download the source files using **git clone** or download the zip file from github.
+
+```sh
+$ git clone https://github.com/h3dema/bwping-udp
+```
+
 Go to the directory of the uncompressed files (*cd ./bwping-udp*).
 To compile and install bwping, simply run:
 
