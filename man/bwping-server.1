@@ -1,0 +1,33 @@
+.\" Manpage for bwping-client.
+.\" Contact AUTHOR to correct errors or typos.
+.TH man 1 "08 January 2017" "1.0" "bwping-client man page"
+.SH NAME
+bwping-server \- The bwping server side tool for measuring maximum UDP bandwidth
+
+.SH DESCRIPTION
+bwping-server is part of a client-server tool for measuring bandwidth and response times between two hosts using UDP request/reply mechanism. It requires a client and a server program.
+
+.SH USAGE
+Usage: bwping-server [-l <length>] [-p<port>] [-6] [-d] [-q] [-h] [-v]
+    -l length : payload byte length of each packet (see RFC 2544 - 64, 128, 256, 512, 1024, 1280 and 1518 bytes)
+    -p port   : server UDP port to listen to, default = 5001
+    -d        : run server as a daemon (UDP LISTENING on -p port)
+    -6        : connect using IPv6
+
+Miscellaneous:
+    -q : quiet
+    -h : print this help message and quit
+    -v : print version information and quit
+
+
+.SH SEE ALSO
+bwping-client(1)
+
+.SH BUGS
+No known bugs.
+Report bugs to <damacedo@dcc.ufmg.br>
+
+.SH AUTHORS
+Daniel Macedo (damacedo@dcc.ufmg.br)
+Erik de Britto e Silva (erikbritto@gmail.com)
+Henrique Moura (henriquemoura@hotmail.com)
