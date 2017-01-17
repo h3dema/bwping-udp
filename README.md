@@ -1,31 +1,35 @@
 # bwping-udp
 
-##About bwping
-================
+##About
 
-bwping is a tool for wireless performance measurement. It was
+**bwping-udp** is a tool for wireless performance measurement. It was
 developed in the WINET laboratory (http://www.winet.dcc.ufmg.br) in
 UFMG in order to collect metrics relevant to wireless links that are
 not collected by classic tools (i.e. Iperf and others).
 
-##For the impatient
-=================
 
+##For the impatient
+
+Download the source files using **git clone** or download the zip file from github.
+Go to the directory of the uncompressed files (*cd ./bwping-udp*).
 To compile and install bwping, simply run:
 
+```sh
 % make
 % make install
+```
 
 To get help, run:
 
-%man bwping-client
-%man bwping-server
-
+```sh
+% man bwping-client
+% man bwping-server
+```
 
 ##Licensing and liability
-=========================
 
-THIS SOFTWARE IS PROVIDED BY THE UFMG/DCC/WINET AND CONTRIBUTORS ``AS
+
+THIS SOFTWARE IS PROVIDED BY THE [UFMG/DCC/WINET](http://www.winet.dcc.ufmg.br/) AND CONTRIBUTORS ''AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE
