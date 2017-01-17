@@ -10,6 +10,8 @@ not collected by classic tools (i.e. Iperf and others).
 
 ##For the impatient
 
+Download the source files using **git clone** or download the zip file from github.
+Go to the directory of the uncompressed files (*cd ./bwping-udp*).
 To compile and install bwping, simply run:
 
 ```sh
@@ -27,7 +29,7 @@ To get help, run:
 ##Licensing and liability
 
 
-THIS SOFTWARE IS PROVIDED BY THE [UFMG/DCC/WINET](http://www.winet.dcc.ufmg.br/) AND CONTRIBUTORS ``AS
+THIS SOFTWARE IS PROVIDED BY THE [UFMG/DCC/WINET](http://www.winet.dcc.ufmg.br/) AND CONTRIBUTORS ''AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE
