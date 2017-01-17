@@ -1,8 +1,15 @@
 # bwping-udp
 
-
-For the impatient
+##About bwping
 ================
+
+bwping is a tool for wireless performance measurement. It was
+developed in the WINET laboratory (http://www.winet.dcc.ufmg.br) in
+UFMG in order to collect metrics relevant to wireless links that are
+not collected by classic tools (i.e. Iperf and others).
+
+##For the impatient
+=================
 
 To compile and install bwping, simply run:
 
@@ -15,16 +22,8 @@ To get help, run:
 %man bwping-server
 
 
-About bwping
-================
-
-bwping is a tool for wireless performance measurement. It was
-developed in the WINET laboratory (http://www.winet.dcc.ufmg.br) in
-UFMG in order to collect metrics relevant to wireless links that are
-not collected by classic tools (i.e. Iperf and others).
-
-Licensing and liability
-================
+##Licensing and liability
+=========================
 
 THIS SOFTWARE IS PROVIDED BY THE UFMG/DCC/WINET AND CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
