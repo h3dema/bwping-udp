@@ -12,17 +12,17 @@ not collected by classic tools (i.e. Iperf and others).
 
 To compile and install bwping, simply run:
 
+```sh
 % make
-
 % make install
+```
 
 To get help, run:
 
-%man bwping-client
-
-%man bwping-server
-
-
+```sh
+% man bwping-client
+% man bwping-server
+```
 
 ##Licensing and liability
 
