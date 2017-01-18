@@ -11,9 +11,9 @@
 
 | Parameter | Description |
 ---| ---|
-    -l | length : payload byte length of each packet (see RFC 2544 - 64, 128, 256, 512, 1024, 1280 and 1518 bytes)
-    -p port | server UDP port to listen to, default = 5001
-    -d | run server as a daemon (UDP LISTENING on -p port)
+    -l length | payload byte length of each packet (see RFC 2544 - 64, 128, 256, 512, 1024, 1280 and 1518 bytes)
+    -p port | server UDP port to listen to, default = 5001 (UDP LISTENING on -p port)
+    -d | run server as a daemon 
     -6 | connect using IPv6
 Miscellaneous | |
     -q | quiet
@@ -29,5 +29,8 @@ Report bugs to <damacedo@dcc.ufmg.br>
 
 ##AUTHORS
 Daniel Macedo ([damacedo@dcc.ufmg.br](damacedo@dcc.ufmg.br))
+
 Erik de Britto e Silva (erikbritto@gmail.com)
+
 Henrique Moura (henriquemoura@hotmail.com)
+

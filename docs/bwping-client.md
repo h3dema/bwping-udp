@@ -52,5 +52,7 @@ Report bugs to <damacedo@dcc.ufmg.br>
 
 ##AUTHORS
 Daniel Macedo ([damacedo@dcc.ufmg.br](damacedo@dcc.ufmg.br))
+
 Erik de Britto e Silva (erikbritto@gmail.com)
+
 Henrique Moura (henriquemoura@hotmail.com)
