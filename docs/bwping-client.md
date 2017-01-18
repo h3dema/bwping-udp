@@ -11,18 +11,18 @@
 
 | Parameter | Description |
 ---| ---|
--a ip   | server IPv4 address (required)  
--p port | server UDP port in use , default = 5001
--l length  | payload byte length of each packet  (see RFC 2544 - 64, 128, 256, 512, 1024, 1280 and 1518 bytes)
--t interval | time between bwping requests in microseconds - default 1 second
--d duration | total execution time in seconds - Number of collected samples = duration/interval
--i interval | time between periodic bandwidth reports in seconds - default 1 second
--o outfile | record output to file name outfile - overwrite
-    -6         | connect using IPv6 - default connect with IPv4 |
-    -c         | output in CSV (Comma Separated Values ) format  |
+-a ip   | server IPv4 address (required) |
+-p port | server UDP port in use , default = 5001 |
+-l length  | payload byte length of each packet  (see RFC 2544 - 64, 128, 256, 512, 1024, 1280 and 1518 bytes) |
+-t interval | time between bwping requests in microseconds - default 1 second |
+-d duration | total execution time in seconds - Number of collected samples = duration/interval |
+-i interval | time between periodic bandwidth reports in seconds - default 1 second |
+-o outfile | record output to file name outfile - overwrite |
+-6 | connect using IPv6 - default connect with IPv4 |
+-c | output in CSV (Comma Separated Values ) format  |
 Miscellaneous |
-    -h | print this help message and quit |
-    -v | print version information and quit |
+-h | print this help message and quit |
+-v | print version information and quit |
 
 ###Notes:
 
@@ -44,7 +44,7 @@ Miscellaneous |
    * **bwping-client** with no -d duration runs forever!
 
 ##SEE ALSO
-**[bwping-server](https://github.com/h3dema/bwping-udp/docs/bwping-server.md)**
+**[bwping-server](https://github.com/h3dema/bwping-udp/blob/master/docs/bwping-server.md)**
 
 ##BUGS
 No known bugs.
