@@ -31,17 +31,17 @@ To get help, run:
 % man bwping-server
 ```
 
-##SEE MORE INFORMATION
+## See More Information
 **[bwping-client](https://github.com/h3dema/bwping-udp/blob/master/docs/bwping-client.md)**
 
 **[bwping-server](https://github.com/h3dema/bwping-udp/blob/master/docs/bwping-server.md)**
 
 
-##BUGS
+## BUGS
 No known bugs.
 Report bugs to <damacedo@dcc.ufmg.br>
 
-## FEATURES WISH LIST
+## Features Wish List
 
   * Parallel streams
   * Reverse test mode – Server sends, client receives
@@ -59,7 +59,7 @@ Erik de Britto e Silva (erikbritto@gmail.com)
 Henrique Moura (henriquemoura@hotmail.com)
 
 
-##Licensing and liability
+##Licensing and Liability
 
 
 THIS SOFTWARE IS PROVIDED BY THE [UFMG/DCC/WINET](http://www.winet.dcc.ufmg.br/) AND CONTRIBUTORS ''AS
