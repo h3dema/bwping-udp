@@ -31,6 +31,34 @@ To get help, run:
 % man bwping-server
 ```
 
+##SEE MORE INFORMATION
+**[bwping-client](https://github.com/h3dema/bwping-udp/blob/master/docs/bwping-client.md)**
+
+**[bwping-server](https://github.com/h3dema/bwping-udp/blob/master/docs/bwping-server.md)**
+
+
+##BUGS
+No known bugs.
+Report bugs to <damacedo@dcc.ufmg.br>
+
+## FEATURES WISH LIST
+
+  * Parallel streams
+  * Reverse test mode – Server sends, client receives
+  * Set target bandwidth to n bits/sec
+  * output in JSON format
+  * set CPU affinity
+  * format to print bandwidth numbers in (Kbits/sec, Kbytes/sec, Mbits/sec, MBytes/sec)
+
+
+##AUTHORS
+Daniel Macedo ([damacedo@dcc.ufmg.br](damacedo@dcc.ufmg.br))
+
+Erik de Britto e Silva (erikbritto@gmail.com)
+
+Henrique Moura (henriquemoura@hotmail.com)
+
+
 ##Licensing and liability
 
 
