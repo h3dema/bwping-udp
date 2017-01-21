@@ -5,7 +5,9 @@
 **bwping-udp** is a tool for wireless performance measurement. It was
 developed in the WINET laboratory (http://www.winet.dcc.ufmg.br) at
 UFMG to collect metrics relevant to wireless links that are
-not collected by classic tools (i.e. Iperf and others).
+not collected by classic tools (i.e. Iperf and others). **bwping-udp** can be used
+on common Ethernet cabling, fiber optics and even sattelite links between two
+hosts. 
 
 
 ##For the impatient
