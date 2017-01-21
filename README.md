@@ -3,8 +3,8 @@
 ##About
 
 **bwping-udp** is a tool for wireless performance measurement. It was
-developed in the WINET laboratory (http://www.winet.dcc.ufmg.br) in
-UFMG in order to collect metrics relevant to wireless links that are
+developed in the WINET laboratory (http://www.winet.dcc.ufmg.br) at
+UFMG to collect metrics relevant to wireless links that are
 not collected by classic tools (i.e. Iperf and others).
 
 
