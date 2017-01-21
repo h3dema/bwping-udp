@@ -90,7 +90,7 @@ void run(bool daemon_mode, int port, int length, bool quiet, bool ipv6) {
    if ((sockfd=socket(domain, SOCK_DGRAM, 0)) >= 0) {
      // valid socket
      if (!quiet) {
-         printf("Starting server %s@ %d - buffer size: %d\n", (ipv6) ? "with IPv6 " : "", port, length);
+         printf("Starting server %s@ %d - payload size: %d\n", (ipv6) ? "with IPv6 " : "with IPv4", port, length);
          if (daemon_mode) printf("Entering daemon mode\n");    
      }
 
