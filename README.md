@@ -7,7 +7,7 @@ developed in the WINET laboratory (http://www.winet.dcc.ufmg.br) at
 UFMG to collect metrics relevant to wireless links that are
 not collected by classic tools (i.e. Iperf and others). **bwping-udp** can be used
 on ordinary Ethernet, fiber optics and even sattelite links between two
-hosts. 
+hosts. The payload can be set to jumbo frame size up to more than 9000 bytes if needed.
 
 
 ##For the impatient
