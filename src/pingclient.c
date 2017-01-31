@@ -253,6 +253,68 @@ void make_accounting(header *hdr, bool csv, FILE * fp) {
   }
 
 }
+ 
+
+void get_rssi(char * wlan_if){
+  FILE * frssi;
+  char frssi_buff1[256],frssi_buff2[256];  
+  char wlan[10], status[4], link[6], level[6], noise[6];
+  bool found_wlan_if = true;
+
+  /* Check if this is the standard file location */
+  frssi=fopen("/proc/net/wireless","r");
+  if (frssi == NULL ) {
+     fprintf(stderr,"Info about wireless interface not found! Please check right wlan interface name.\n");
+     perror("");
+     exit(1);
+  }
+  /* Starting two lines are text header */
+  if ( fgets(frssi_buff1,256,frssi) == NULL ) {
+     fprintf(stderr,"Error reading wireless interface data!\n");
+     perror("");
+     exit(1);
+  }
+  if ( fgets(frssi_buff2,256,frssi) == NULL ) {
+     fprintf(stderr,"Error reading wireless interface data!\n");
+     perror("");
+     exit(1);
+  }
+ 
+  /* Read line with string values */
+  if ( fscanf(frssi,"%s %s %s %s %s", wlan, status, link, level, noise) != 5 ){
+     fprintf(stderr,"Error converting %s values or %s not founf.\n",wlan_if,wlan_if);
+     perror("");
+     exit(1);
+  }
+  #ifdef DEBUG 
+  printf("Buffer 1 = %s",frssi_buff1);
+  printf("Buffer 2 = %s\n",frssi_buff2);
+  #endif
+
+  /* Check if is the first wlan interface = wlan_if */
+  if ( strncmp(wlan_if, wlan, strlen(wlan_if)) != 0 ) {
+      /* So check if exists more wlan interfaces */
+     found_wlan_if = false;
+     while ( ! feof(frssi) && ! found_wlan_if ) { 
+        if ( fscanf(frssi,"%s %s %s %s %s", wlan, status, link, level, noise) != 5 ){
+           fprintf(stderr,"Error converting %s values or %s not found.\n",wlan_if,wlan_if);
+           perror("");
+           exit(1);
+        }
+        if (strncmp(wlan_if, wlan, strlen(wlan_if)) == 0 ) {
+           found_wlan_if = true;
+        }  
+     } 
+  }
+  if ( found_wlan_if ) {
+      printf("\nWlan interface = %s\n\tStatus = %s, Link = %s\n\tReceived Signal level = %s dBm, Noise level = %s dBm\n\n", wlan_if, status, link, level, noise);
+   }
+     else { 
+     fprintf(stderr,"Wlan interface %s not found!\n",wlan_if);
+     perror("");
+     exit(1);
+  }
+} 
 
 void version(char ** argv) {
   printf("%s version %s\n", argv[0], BWPING_VERSION);
@@ -268,6 +330,7 @@ void usage(char ** argv) {
   printf("\t-d duration: total execution time in seconds - Number of collected samples = duration/interval\n");
   printf("\t-i interval: time between periodic bandwidth reports in seconds - default 1 second\n");
   printf("\t-o filename: record output to local file filename\n"); 
+  printf("\t-s wlan-if : print received signal and noise power in dBm of interface wlan-if\n");  
   printf("\t-6: connect using IPv6\n");
   printf("\t-c: output in CSV format - Comma Separated Values \n");
   printf("\t    print the following fields in each line, one line per sample\n");
@@ -299,6 +362,7 @@ int main(int argc, char**argv) {
   bool csv = false;
   bool outfile = false;
   bool ipv6 = false;
+  char * wlan_if = NULL;
   
   int port = 5001;
   long long int intusec = 10000; // 10ms
@@ -307,7 +371,7 @@ int main(int argc, char**argv) {
 
   int c = 0;
   char * hostname = NULL;
-  while ((c = getopt(argc, argv, "a:p:l:t:d:o:i:6chv")) != -1) {
+  while ((c = getopt(argc, argv, "a:p:l:t:d:o:i:s:6chv")) != -1) {
     switch(c){
       case 'a':
         hostname = optarg;
@@ -332,6 +396,10 @@ int main(int argc, char**argv) {
       case 'i':
         sscanf(optarg,"%d",&print_interval);
         if (print_interval < 1) print_interval = 1;
+        break;
+      case 's':
+        wlan_if = optarg;
+        get_rssi(wlan_if);
         break;
       case 'c':
         csv = true;
@@ -420,6 +488,7 @@ int main(int argc, char**argv) {
   //start_time = time(NULL);
   time(&start_time);
 
+  // Print the RSSI - Received signal and noise power level in dBm of the selected interface
   bool inf_loop = true;
   while (inf_loop) {
     struct timeval send_time;  
