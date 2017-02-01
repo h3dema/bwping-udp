@@ -43,6 +43,11 @@ Miscellaneous |
 
   * *total_diff* = *total_sent* - *total_rcvd*
 
+  * link_quality_local and link_quality_remote are values between 0 and 100, provided by the driver provider
+
+  * signal_local, noise_local, signal_remote, noise_remote are in dBm
+
+
    * **bwping-client** with no -d duration runs forever!
 
 ##SEE ALSO

@@ -171,7 +171,7 @@ void make_accounting(header *hdr, bool csv, bool cpu_usage, bool rssi, FILE * fp
     if (rssi) {
       link_m += hdr->link;
       level_m += hdr->level;
-      noise_m =+ hdr->noise;
+      noise_m += hdr->noise;
     }
 
     lastdelay = delay;
@@ -251,7 +251,7 @@ void make_accounting(header *hdr, bool csv, bool cpu_usage, bool rssi, FILE * fp
         sprintf_format = ", %f, %f, %f, %f";
       else
         sprintf_format = "local[idle: %10.6f non-idle: %10.6f] remote[idle: %10.6f non-idle: %10.6f] ";
-      sprintf((char *)&cpu_i, sprintf_format, idle_lt_m, nidle_lt_m, idle_rt_m, nidle_rt_m);
+      sprintf((char *)&cpu_i, sprintf_format, (double) idle_lt_m*100.0, (double) nidle_lt_m*100.0, (double) idle_rt_m*100.0, (double) nidle_rt_m*100.0);
     } else {
       cpu_i[0] = '\0';
     }
@@ -261,7 +261,7 @@ void make_accounting(header *hdr, bool csv, bool cpu_usage, bool rssi, FILE * fp
       float link, level, noise;
       get_rssi(&link, &level, &noise);
       if (csv)
-        sprintf_format = ", %f, %f, %f, %f, %f %f";
+        sprintf_format = ", %f, %f, %f, %f, %f, %f";
       else
         sprintf_format = "local[link quality: %5.1f signal: %5.1f noise: %5.1f] remote[link quality: %5.1f signal: %5.1f noise: %5.1f] ";
       sprintf((char *)&rssi_i, sprintf_format, link, level, noise, (double) link_m, (double) level_m, (double) noise_m);
@@ -270,7 +270,7 @@ void make_accounting(header *hdr, bool csv, bool cpu_usage, bool rssi, FILE * fp
     }
 
     if (csv) {
-      fprintf(fp,"%04d%02d%02d%02d%02d%02d, %.6lu.%.6lu, %llu, %f, %f, %f, %f, %lf, %llu, %llu, %d, %d, %.0lf %s %s\n",
+      fprintf(fp,"%04d%02d%02d%02d%02d%02d, %.6lu.%.6lu, %llu, %f, %f, %f, %f, %lf, %llu, %llu, %d, %d, %.0lf%s%s\n",
              (1900+ti->tm_year), (1+ti->tm_mon), ti->tm_mday, ti->tm_hour, ti->tm_min, ti->tm_sec,
              now.tv_sec,now.tv_usec, bw, delay,delay_s, jitter, jitter_s, loss, sent, recvd, global_sent, global_rcvd , diff_pct, cpu_i, rssi_i);
     } else {
@@ -309,9 +309,8 @@ void usage(char ** argv) {
   printf("\t-c: output in CSV format - Comma Separated Values \n");
   printf("\t    print the following fields in each line, one line per sample\n");
   printf("\t    YYYYMMDDHHMMSS, tv_sec.tv_usec, bw, delay,delay_s, jitter, jitter_s, loss, packets sent, packets recv, total_sent, total_rcvd, total_diff\n");
-  #ifdef CPU_INFO
   printf("\t    cpuidle_t_local, cpu_nonidle_t_local, cpuidle_t_remote, cpu_nonidle_t_remote\n");
-  #endif
+  printf("\t    link_quality_local, signal_local, noise_local, link_quality_remote, signal_remote, noise_remote\n");
   printf("\nMiscellaneous:\n");
   printf("\tbwping with no -d duration runs forever!\n");
   printf("\t-h: print this help message and quit\n");
