@@ -42,7 +42,7 @@ void close_wireless_info(void);
 /**
   @return negative value if an error happened
   */
-int get_rssi(double * link, double * level, double * noise);
+int get_rssi(float * link, float * level, float * noise);
 
 
 #endif

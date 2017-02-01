@@ -85,6 +85,8 @@ uint32_t global_sent = 0, global_rcvd = 0;
 long double delay_m, delay_std, jitter_m, jitter_std, lastdelay;
 unsigned long long sent, recvd;
 long double idle_lt_m, nidle_lt_m, idle_rt_m, nidle_rt_m;
+long double link_m, level_m, noise_m;
+
 
 struct timeval last_print;
 
@@ -126,6 +128,7 @@ void clear_stats() {
   sent = 0;
   recvd = 0;
   idle_lt_m = nidle_lt_m = idle_rt_m = nidle_rt_m = 0; // clear cpu times
+  link_m = level_m = noise_m = 0; // wireless info
   gettimeofday(&last_print,NULL);
 }
 
@@ -165,6 +168,12 @@ void make_accounting(header *hdr, bool csv, bool cpu_usage, bool rssi, FILE * fp
       nidle_rt_m += hdr->non_idle_time_perc;
     }
 
+    if (rssi) {
+      link_m += hdr->link;
+      level_m += hdr->level;
+      noise_m =+ hdr->noise;
+    }
+
     lastdelay = delay;
   }
 
@@ -198,6 +207,12 @@ void make_accounting(header *hdr, bool csv, bool cpu_usage, bool rssi, FILE * fp
         nidle_rt_m *= inv_n;
       }
 
+      if (rssi) {
+        link_m *= inv_n;
+        level_m *= inv_n;
+        noise_m *= inv_n;
+      }
+
     } else {
 
       delay = 0;
@@ -208,6 +223,10 @@ void make_accounting(header *hdr, bool csv, bool cpu_usage, bool rssi, FILE * fp
 
       if (cpu_usage) {
         idle_lt_m = nidle_lt_m = idle_rt_m = nidle_rt_m = 0;
+      }
+
+      if (rssi) {
+        link_m = level_m = noise_m = 0;
       }
     }
 
@@ -226,31 +245,39 @@ void make_accounting(header *hdr, bool csv, bool cpu_usage, bool rssi, FILE * fp
     //double diff_percent =  ((diff_pct * 100) / global_sent);
 
     char cpu_i[200];
-    char * cpu_format;
+    char * sprintf_format;
     if (cpu_usage) {
       if (csv)
-        cpu_format = ", %f, %f, %f, %f";
+        sprintf_format = ", %f, %f, %f, %f";
       else
-        cpu_format = "local[idle: %10.6f non-idle: %10.6f] remote[idle: %10.6f non-idle: %10.6f]";
-      sprintf((char *)&cpu_i, cpu_format, idle_lt_m, nidle_lt_m, idle_rt_m, nidle_rt_m);
+        sprintf_format = "local[idle: %10.6f non-idle: %10.6f] remote[idle: %10.6f non-idle: %10.6f] ";
+      sprintf((char *)&cpu_i, sprintf_format, idle_lt_m, nidle_lt_m, idle_rt_m, nidle_rt_m);
     } else {
       cpu_i[0] = '\0';
     }
 
-    double link;
-    double level;
-    double noise;
-    get_rssi(&link, &level, &noise);
+    char rssi_i[400];
+    if (rssi) {
+      float link, level, noise;
+      get_rssi(&link, &level, &noise);
+      if (csv)
+        sprintf_format = ", %f, %f, %f, %f, %f %f";
+      else
+        sprintf_format = "local[link quality: %5.1f signal: %5.1f noise: %5.1f] remote[link quality: %5.1f signal: %5.1f noise: %5.1f] ";
+      sprintf((char *)&rssi_i, sprintf_format, link, level, noise, (double) link_m, (double) level_m, (double) noise_m);
+    } else {
+      rssi_i[0] = '\0';
+    }
 
     if (csv) {
-      fprintf(fp,"%04d%02d%02d%02d%02d%02d, %.6lu.%.6lu, %llu, %f, %f, %f, %f, %lf, %llu, %llu, %d, %d, %.0lf %s\n",
+      fprintf(fp,"%04d%02d%02d%02d%02d%02d, %.6lu.%.6lu, %llu, %f, %f, %f, %f, %lf, %llu, %llu, %d, %d, %.0lf %s %s\n",
              (1900+ti->tm_year), (1+ti->tm_mon), ti->tm_mday, ti->tm_hour, ti->tm_min, ti->tm_sec,
-             now.tv_sec,now.tv_usec, bw, delay,delay_s, jitter, jitter_s, loss, sent, recvd, global_sent, global_rcvd , diff_pct, cpu_i);
+             now.tv_sec,now.tv_usec, bw, delay,delay_s, jitter, jitter_s, loss, sent, recvd, global_sent, global_rcvd , diff_pct, cpu_i, rssi_i);
     } else {
 
-      fprintf(fp,"%.6lu.%.6lu BWPING: Bw %llu bps Delay (%f,%f)s Jitter (%f,%f)s Loss %.2lf%% LSent %llu LRecv %llu TSent %d Trcvd %d TDiff %.0lf %s [%04d%02d%02d%02d%02d%02d]\n",
+      fprintf(fp,"%.6lu.%.6lu BWPING: Bw %llu bps Delay (%f,%f)s Jitter (%f,%f)s Loss %.2lf%% LSent %llu LRecv %llu TSent %d Trcvd %d TDiff %.0lf %s%s[%04d%02d%02d%02d%02d%02d]\n",
               now.tv_sec,now.tv_usec, bw, delay,delay_s, jitter, jitter_s, loss,
-              sent, recvd, global_sent, global_rcvd, diff_pct, cpu_i,
+              sent, recvd, global_sent, global_rcvd, diff_pct, cpu_i, rssi_i,
               (1900+ti->tm_year), (1+ti->tm_mon), ti->tm_mday, ti->tm_hour, ti->tm_min, ti->tm_sec);
       fflush(fp);
     }
@@ -309,8 +336,8 @@ int main(int argc, char**argv) {
   bool csv = false;
   bool outfile = false;
   bool ipv6 = false;
-  bool cpu_usage = true;
-  bool rssi = true;
+  bool cpu_usage = false;
+  bool rssi = false;
 
   int port = 5001;
   long long int intusec = 10000; // 10ms
@@ -382,7 +409,6 @@ int main(int argc, char**argv) {
     }
   }
   if (length < sizeof(header)) length = sizeof(header);
-
   if (NULL == hostname){
      fprintf(stderr,"Server IP Address is required! Exiting...\n");
      fprintf(stderr,"Call %s -h to see some help.\n", argv[0]);

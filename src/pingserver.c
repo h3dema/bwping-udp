@@ -109,11 +109,22 @@ void run(bool daemon_mode, int port, int length, bool quiet, bool ipv6, bool rss
        addr_size = sizeof(*addr);
      }
      bind(sockfd, (struct sockaddr *)&servaddr, addr_size);
-
      for (;;) { // loop forever
         recvfrom(sockfd, recvBuffer, sizeof(char)*length, 0,
                   (struct sockaddr *)&cliaddr, &addr_size);
         header * recv = (header *)&recvBuffer;
+        // CPU info
+        cpu_info info;
+        get_cpu_info(&info);
+        recv->idle_time_perc = info.idle_time_perc;
+        recv->non_idle_time_perc = info.non_idle_time_perc;
+
+        // RSSI info
+        if (rssi) {
+          strncpy((char *)&recv->intfname, wlan_if, MAX_INTF_NAME);
+          get_rssi(&recv->link, &recv->level, &recv->noise);
+        }
+
         if (!quiet) {
           char str[INET6_ADDRSTRLEN];
           if (ipv6) {
@@ -123,19 +134,8 @@ void run(bool daemon_mode, int port, int length, bool quiet, bool ipv6, bool rss
             struct sockaddr_in * addr = (struct sockaddr_in *)&cliaddr;
             inet_ntop(AF_INET, &addr->sin_addr, str, INET_ADDRSTRLEN);
           }
-          if (!quiet) printf("[%s] Received packet number %d\n", str, recv->seqnum);
+          printf("[%s] Received packet number %d\n", str, recv->seqnum);
         }
-        // CPU info
-        cpu_info info;
-        get_cpu_info(&info);
-        recv->idle_time_perc = info.idle_time_perc;
-        recv->non_idle_time_perc = info.non_idle_time_perc;
-        // RSSI info
-        if (rssi) {
-          strncpy((char *)&recv->intfname, wlan_if, MAX_INTF_NAME);
-          get_rssi(&recv->link, &recv->level, &recv->noise);
-        }
-
         sendto(sockfd, recv, sizeof(header), 0, (struct sockaddr *)&cliaddr, addr_size);
      }
    } else {
@@ -157,7 +157,7 @@ int main(int argc, char**argv) {
    char wlan_if[MAX_INTF_NAME];
    wlan_if[0] = '\0';
 
-   while ((c = getopt(argc, argv, "p:l:6qdhv")) != -1) {
+   while ((c = getopt(argc, argv, "p:l:s:6qdhv")) != -1) {
        switch(c){
           case 'p':
             port = atoi(optarg);
@@ -203,7 +203,9 @@ int main(int argc, char**argv) {
             exit(1);
        }
    }
-   if (length < sizeof(header)) length = sizeof(header);
+   if (length < sizeof(header)) {
+    length = sizeof(header);
+   }
 
    if ((!daemon_mode) || (daemon(1, 1)==0))  {
      // daemon: don't change directory, don't redirect output

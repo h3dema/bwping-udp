@@ -47,7 +47,7 @@ void close_wireless_info() {
   if (__frssi) fclose(__frssi);
 }
 
-int get_rssi(double * link, double * level, double * noise) {
+int get_rssi(float * link, float * level, float * noise) {
   char wlan[10], status[4], link_str[6], level_str[6], noise_str[6];
   wlan[0] = '\0';
 
