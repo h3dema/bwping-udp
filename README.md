@@ -51,10 +51,11 @@ Report bugs to <damacedo@dcc.ufmg.br>
   * output in JSON format
   * set CPU affinity
   * format to print bandwidth numbers in (Kbits/sec, Kbytes/sec, Mbits/sec, MBytes/sec)
+  * capture the signal and noise in the wireless interface
 
 
 ##AUTHORS
-Daniel Macedo ([damacedo@dcc.ufmg.br](damacedo@dcc.ufmg.br))
+Daniel Macedo (damacedo@dcc.ufmg.br)
 
 Erik de Britto e Silva (erikbritto@gmail.com)
 

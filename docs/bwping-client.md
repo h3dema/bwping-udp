@@ -14,7 +14,7 @@
 -a ip   | server IPv4 address (required) |
 -p port | server UDP port in use , default = 5001 |
 -l length  | payload byte length of each packet  (see RFC 2544 - 64, 128, 256, 512, 1024, 1280 and 1518 bytes) |
--t interval | time between bwping requests in microseconds - default 1 second |
+-t interval | time between **bwping-udp** requests in microseconds - default 1 second |
 -d duration | total execution time in seconds - Number of collected samples = duration/interval |
 -i interval | time between periodic bandwidth reports in seconds - default 1 second |
 -o outfile | record output to file name outfile - overwrite |
@@ -26,20 +26,20 @@ Miscellaneous |
 
 ###Notes:
 
-  * delay and jitter are shown in seconds
-
-  * loss is shown in percentage
-
-  * bw (bandwidth) is shown in bytes per second (Bps)
-
-  * packets_sent and packets_recv are the number of packets sent and received in the sample period
-  
-  * total_sent and total_rcvd are the total number of packets sent and received since the begin of the test
-
-  * total_diff = total_sent - total_rcvd
-
   * Comma Separated Values  option prints the following fields in each line, one line per sample:
   YYYYMMDDHHMMSS, tv_sec.tv_usec, bw, delay, delay_s, jitter, jitter_s, loss, packets_sent, packets_recv, total_sent, total_rcvd, total_diff, cpuidle_t_local, cpu_nonidle_t_local, cpuidle_t_remote, cpu_nonidle_t_remote
+
+  * *delay* and *jitter* are shown in seconds
+
+  * *loss* is shown in percentage
+
+  * *bw* (bandwidth) is shown in bytes per second (Bps)
+
+  * *packets_sent* and *packets_recv* are the number of packets sent and received in the sample period
+  
+  * *total_sent* and *total_rcvd* are the total number of packets sent and received since the begin of the test
+
+  * *total_diff* = *total_sent* - *total_rcvd*
   
    * **bwping-client** with no -d duration runs forever!
 
