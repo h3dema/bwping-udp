@@ -8,18 +8,19 @@ bwping-client \- The bwping client side tool for measuring maximum UDP bandwidth
 bwping-client is part of a client-server tool for measuring bandwidth and response times between two hosts using UDP request/reply mechanism. It requires a client and a server program.
 
 .SH USAGE
-Usage: bwping-client -a <IP address> [-p <port>] [-l <length>] [-t <interval_in_us>] [-d duration] [-c] [-h] [-v]
-    -a ip      : server IPv4 address (required)  
+Usage: bwping-client -a <IP address> [-p <port>] [-l <length>] [-t <interval_in_us>] [-d duration] [-c] [-h] [-v] [-s wlan-if] [-r]
+    -a ip      : server IPv4 address (required)
     -p port    : server UDP port in use , default = 5001
-    -l length  : payload byte length of each packet 
+    -l length  : payload byte length of each packet
                  (see RFC 2544 - 64, 128, 256, 512, 1024, 1280 and 1518 bytes)
     -t interval: time between bwping requests in microseconds - default 10 milissecond
     -d duration: total execution time in seconds - Number of collected samples = duration/interval
     -i interval: time between periodic bandwidth reports in seconds - default 1 second
     -o outfile : record output to file name outfile - overwrite
     -s wlan-if : print received signal and noise power in dBm of interface wlan-if
+    -r         : print CPU idle and non-idle times
     -6         : connect using IPv6 - default connect with IPv4
-    -c         : output in CSV format - Comma Separated Values  
+    -c         : output in CSV format - Comma Separated Values
                  print the following fields in each line, one line per sample
                  YYYYMMDDHHMMSS, tv_sec.tv_usec, bw, delay, delay_s, jitter, jitter_s, loss, packets_sent, packets_recv, total_sent, total_rcvd, total_diff, cpuidle_t_local, cpu_nonidle_t_local, cpuidle_t_remote, cpu_nonidle_t_remote
 

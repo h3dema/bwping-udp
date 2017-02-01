@@ -33,7 +33,7 @@
  */
 
 /*
-  BWPing is a tool to measure bandwidth and response times 
+  BWPing is a tool to measure bandwidth and response times
   between two hosts using UDP request/reply mechanism.
   It requires a client and a server program.
 
@@ -46,10 +46,10 @@
   TODO list:
   1-) Online calculation of 0/50/95th quantile of one way delay and number of loss periods;
   2-) improve format presentation: using Kbits, Mbits, KBytes, MBytes
-  3-) allow the user to define the period between periodic bandwidth reports 
+  3-) allow the user to define the period between periodic bandwidth reports
   4-) calcular o tempo de ida e o tempo de volta (é possível? sincronismo?)
   5-) user, system, and wall-clock time
-  
+
   xxx) transmitter and receiver CPU utilization - ok - just compile with -DCPU_INFO
 
  */
@@ -68,11 +68,10 @@
 #include <unistd.h> // getopt
 #include <stdbool.h>
 
-#include "ping.h" 
+#include "ping.h"
+#include "cpu_info.h"
+#include "wireless.h"
 
-#ifdef CPU_INFO
-#include "cpu_info.h" 
-#endif
 
 // if VERBOSE is defined, display sending and receiving packets
 #undef VERBOSE
@@ -80,7 +79,7 @@
 // Turn on DEBUG 1 to display wait times and timeouts
 //#define DEBUG 1
 
-uint32_t length = DEFAULT_PAYLOAD_SIZE;
+uint32_t length = DEFAULT_MINIMUM_PAYLOAD_SIZE;
 uint32_t global_sent = 0, global_rcvd = 0;
 
 long double delay_m, delay_std, jitter_m, jitter_std, lastdelay;
@@ -105,7 +104,7 @@ int timeval_subtract (result, x, y)
     y->tv_usec += 1000000 * nsec;
     y->tv_sec -= nsec;
   }
-     
+
   /* Compute the time remaining to wait.
      tv_usec is certainly positive. */
   result->tv_sec = x->tv_sec - y->tv_sec;
@@ -130,18 +129,18 @@ void clear_stats() {
   gettimeofday(&last_print,NULL);
 }
 
-void make_accounting(header *hdr, bool csv, FILE * fp) {
+void make_accounting(header *hdr, bool csv, bool cpu_usage, bool rssi, FILE * fp) {
 
   struct timeval now, diff;
   gettimeofday(&now, NULL);
 
-  if(hdr != NULL) {   
+  if(hdr != NULL) {
     struct timeval hdr_time;
     hdr_time.tv_sec = hdr->sent_time.tv_sec;
     hdr_time.tv_usec = hdr->sent_time.tv_usec;
     timeval_subtract(&diff, &now, &hdr_time);
     long double delay = getTV(&diff)/2.0;
-     
+
     //Counter of received packets
     recvd++;
 
@@ -155,25 +154,25 @@ void make_accounting(header *hdr, bool csv, FILE * fp) {
     jitter_std += jitter * jitter;
 
     // cpu times calculation
-    #ifdef CPU_INFO
-    cpu_info info;
-    get_cpu_info(&info);    
+    if (cpu_usage) {
+      cpu_info info;
+      get_cpu_info(&info);
 
-    idle_lt_m += info.idle_time_perc;
-    nidle_lt_m += info.non_idle_time_perc;
+      idle_lt_m += info.idle_time_perc;
+      nidle_lt_m += info.non_idle_time_perc;
 
-    idle_rt_m += hdr->idle_time_perc;
-    nidle_rt_m += hdr->non_idle_time_perc;
-    #endif
+      idle_rt_m += hdr->idle_time_perc;
+      nidle_rt_m += hdr->non_idle_time_perc;
+    }
 
     lastdelay = delay;
   }
 
   if(now.tv_sec >= last_print.tv_sec + print_interval) {
-    //time to print the variables... 
+    //time to print the variables...
     last_print.tv_sec = now.tv_sec;
 
-    double jitter,jitter_sq, delay, delay_sq; 
+    double jitter,jitter_sq, delay, delay_sq;
 
 
     if(recvd > 0) {
@@ -190,14 +189,14 @@ void make_accounting(header *hdr, bool csv, FILE * fp) {
         // ok, use the unbiased formula
         jitter = jitter_m/((double)(recvd-1));
         jitter_sq = jitter_std/((double)(recvd-1));
-      }      
+      }
 
-      #ifdef CPU_INFO
-      idle_lt_m *= inv_n;
-      nidle_lt_m *= inv_n;
-      idle_rt_m *= inv_n;
-      nidle_rt_m *= inv_n;
-      #endif
+      if (cpu_usage) {
+        idle_lt_m *= inv_n;
+        nidle_lt_m *= inv_n;
+        idle_rt_m *= inv_n;
+        nidle_rt_m *= inv_n;
+      }
 
     } else {
 
@@ -207,14 +206,14 @@ void make_accounting(header *hdr, bool csv, FILE * fp) {
       jitter = 0;
       jitter_sq = 0;
 
-      #ifdef CPU_INFO
-      idle_lt_m = nidle_lt_m = idle_rt_m = nidle_rt_m = 0;
-      #endif
+      if (cpu_usage) {
+        idle_lt_m = nidle_lt_m = idle_rt_m = nidle_rt_m = 0;
+      }
     }
 
     double delay_s = sqrt(delay_sq - delay*delay);
     double jitter_s = sqrt(fabs(jitter_sq - jitter*jitter));
-        
+
     double loss = ((sent == 0 || sent <= recvd) ? 0.0 : 100.0*(sent - recvd)/(double)sent);
     long long int bw = (length * recvd * 8);
 
@@ -226,95 +225,42 @@ void make_accounting(header *hdr, bool csv, FILE * fp) {
     double diff_pct = (global_sent - global_rcvd);
     //double diff_percent =  ((diff_pct * 100) / global_sent);
 
-    #ifdef CPU_INFO
     char cpu_i[200];
     char * cpu_format;
-    if (csv)
-      cpu_format = ", %f, %f, %f, %f";
-    else
-      cpu_format = "local[idle: %10.6f non-idle: %10.6f] remote[idle: %10.6f non-idle: %10.6f]";
-    sprintf((char *)&cpu_i, cpu_format, idle_lt_m, nidle_lt_m, idle_rt_m, nidle_rt_m);
-    #else
-    char * cpu_i = "";    
-    #endif
+    if (cpu_usage) {
+      if (csv)
+        cpu_format = ", %f, %f, %f, %f";
+      else
+        cpu_format = "local[idle: %10.6f non-idle: %10.6f] remote[idle: %10.6f non-idle: %10.6f]";
+      sprintf((char *)&cpu_i, cpu_format, idle_lt_m, nidle_lt_m, idle_rt_m, nidle_rt_m);
+    } else {
+      cpu_i[0] = '\0';
+    }
+
+    double link;
+    double level;
+    double noise;
+    get_rssi(&link, &level, &noise);
 
     if (csv) {
       fprintf(fp,"%04d%02d%02d%02d%02d%02d, %.6lu.%.6lu, %llu, %f, %f, %f, %f, %lf, %llu, %llu, %d, %d, %.0lf %s\n",
              (1900+ti->tm_year), (1+ti->tm_mon), ti->tm_mday, ti->tm_hour, ti->tm_min, ti->tm_sec,
              now.tv_sec,now.tv_usec, bw, delay,delay_s, jitter, jitter_s, loss, sent, recvd, global_sent, global_rcvd , diff_pct, cpu_i);
-    } else { 
+    } else {
 
       fprintf(fp,"%.6lu.%.6lu BWPING: Bw %llu bps Delay (%f,%f)s Jitter (%f,%f)s Loss %.2lf%% LSent %llu LRecv %llu TSent %d Trcvd %d TDiff %.0lf %s [%04d%02d%02d%02d%02d%02d]\n",
               now.tv_sec,now.tv_usec, bw, delay,delay_s, jitter, jitter_s, loss,
               sent, recvd, global_sent, global_rcvd, diff_pct, cpu_i,
               (1900+ti->tm_year), (1+ti->tm_mon), ti->tm_mday, ti->tm_hour, ti->tm_min, ti->tm_sec);
+      fflush(fp);
     }
     clear_stats();
   }
 
 }
- 
 
-void get_rssi(char * wlan_if){
-  FILE * frssi;
-  char frssi_buff1[256],frssi_buff2[256];  
-  char wlan[10], status[4], link[6], level[6], noise[6];
-  bool found_wlan_if = true;
 
-  /* Check if this is the standard file location */
-  frssi=fopen("/proc/net/wireless","r");
-  if (frssi == NULL ) {
-     fprintf(stderr,"Info about wireless interface not found! Please check right wlan interface name.\n");
-     perror("");
-     exit(1);
-  }
-  /* Starting two lines are text header */
-  if ( fgets(frssi_buff1,256,frssi) == NULL ) {
-     fprintf(stderr,"Error reading wireless interface data!\n");
-     perror("");
-     exit(1);
-  }
-  if ( fgets(frssi_buff2,256,frssi) == NULL ) {
-     fprintf(stderr,"Error reading wireless interface data!\n");
-     perror("");
-     exit(1);
-  }
- 
-  /* Read line with string values */
-  if ( fscanf(frssi,"%s %s %s %s %s", wlan, status, link, level, noise) != 5 ){
-     fprintf(stderr,"Error converting %s values or %s not founf.\n",wlan_if,wlan_if);
-     perror("");
-     exit(1);
-  }
-  #ifdef DEBUG 
-  printf("Buffer 1 = %s",frssi_buff1);
-  printf("Buffer 2 = %s\n",frssi_buff2);
-  #endif
 
-  /* Check if is the first wlan interface = wlan_if */
-  if ( strncmp(wlan_if, wlan, strlen(wlan_if)) != 0 ) {
-      /* So check if exists more wlan interfaces */
-     found_wlan_if = false;
-     while ( ! feof(frssi) && ! found_wlan_if ) { 
-        if ( fscanf(frssi,"%s %s %s %s %s", wlan, status, link, level, noise) != 5 ){
-           fprintf(stderr,"Error converting %s values or %s not found.\n",wlan_if,wlan_if);
-           perror("");
-           exit(1);
-        }
-        if (strncmp(wlan_if, wlan, strlen(wlan_if)) == 0 ) {
-           found_wlan_if = true;
-        }  
-     } 
-  }
-  if ( found_wlan_if ) {
-      printf("\nWlan interface = %s\n\tStatus = %s, Link = %s\n\tReceived Signal level = %s dBm, Noise level = %s dBm\n\n", wlan_if, status, link, level, noise);
-   }
-     else { 
-     fprintf(stderr,"Wlan interface %s not found!\n",wlan_if);
-     perror("");
-     exit(1);
-  }
-} 
 
 void version(char ** argv) {
   printf("%s version %s\n", argv[0], BWPING_VERSION);
@@ -322,15 +268,16 @@ void version(char ** argv) {
 
 void usage(char ** argv) {
   version(argv);
-  printf("Usage: %s -a <IP address> [-p <port>] [-l <length>] [-t <interval_in_us>] [-d duration] [-6] [-c] [-h] [-v] [-o <filename>]\n", argv[0]);
+  printf("Usage: %s -a <IP address> [-p <port>] [-l <length>] [-t <interval_in_us>] [-d duration] [-6] [-c] [-h] [-v] [-o <filename>] [-s wlan-if] [-r]\n", argv[0]);
   printf("\t-a ip      : server IPv4 address (required)\n");
   printf("\t-p port    : server UDP port in use, default = 5001\n");
   printf("\t-l length  : payload byte length of each packet\n");
   printf("\t-t interval: time between bwping requests in microseconds - default 10 ms\n");
   printf("\t-d duration: total execution time in seconds - Number of collected samples = duration/interval\n");
   printf("\t-i interval: time between periodic bandwidth reports in seconds - default 1 second\n");
-  printf("\t-o outfile: record output to file name outfile - overwrite \n"); 
-  printf("\t-s wlan-if : print received signal and noise power in dBm of interface wlan-if\n");  
+  printf("\t-o outfile : record output to file name outfile - overwrite \n");
+  printf("\t-s wlan-if : print received signal and noise power in dBm of interface wlan-if\n");
+  printf("\t-r         : print CPU idle and non-idle times\n");
   printf("\t-6: connect using IPv6\n");
   printf("\t-c: output in CSV format - Comma Separated Values \n");
   printf("\t    print the following fields in each line, one line per sample\n");
@@ -354,16 +301,17 @@ int main(int argc, char**argv) {
   header recv, send;
   double duration = -1.0;
   time_t start_time;
-  
-  FILE * fp = stdout;  /* Output file handler */ 
+
+  FILE * fp = stdout;  /* Output file handler */
 
   char out_filename[255];
 
   bool csv = false;
   bool outfile = false;
   bool ipv6 = false;
-  char * wlan_if = NULL;
-  
+  bool cpu_usage = true;
+  bool rssi = true;
+
   int port = 5001;
   long long int intusec = 10000; // 10ms
 
@@ -371,7 +319,7 @@ int main(int argc, char**argv) {
 
   int c = 0;
   char * hostname = NULL;
-  while ((c = getopt(argc, argv, "a:p:l:t:d:o:i:s:6chv")) != -1) {
+  while ((c = getopt(argc, argv, "a:p:l:t:d:o:i:s:6chvr")) != -1) {
     switch(c){
       case 'a':
         hostname = optarg;
@@ -381,16 +329,16 @@ int main(int argc, char**argv) {
         break;
       case 'l':
         length = atoi(optarg);
-        if (length > 64) length = 64;
+        if (length < DEFAULT_MINIMUM_PAYLOAD_SIZE) length = DEFAULT_MINIMUM_PAYLOAD_SIZE;
         break;
       case 't':
         sscanf(optarg,"%lld",&intusec);
         break;
       case 'd':
-        sscanf(optarg,"%lf",&duration);       
+        sscanf(optarg,"%lf",&duration);
         break;
       case 'o':
-        sscanf(optarg,"%s",out_filename);       
+        sscanf(optarg,"%s",out_filename);
         outfile = true;
         break;
       case 'i':
@@ -398,14 +346,29 @@ int main(int argc, char**argv) {
         if (print_interval < 1) print_interval = 1;
         break;
       case 's':
-        wlan_if = optarg;
-        get_rssi(wlan_if);
+        rssi = true;
+        int err;
+        if ((err = open_wireless_info(optarg)) < 0) {
+          switch (err) {
+            case -1:
+              fprintf(stderr,"Info about wireless interface not found! Please check right wlan interface name.\n");
+              break;
+            case -2:
+            case -3:
+              fprintf(stderr,"Error reading wireless interface data!\n");
+              break;
+          }
+          exit(1); // error
+        }
         break;
       case 'c':
         csv = true;
         break;
       case '6':
         ipv6 = true;
+        break;
+      case 'r':
+        cpu_usage = true;
         break;
       case 'v':
         version(argv);
@@ -418,13 +381,14 @@ int main(int argc, char**argv) {
         exit(1);
     }
   }
+  if (length < sizeof(header)) length = sizeof(header);
 
   if (NULL == hostname){
      fprintf(stderr,"Server IP Address is required! Exiting...\n");
      fprintf(stderr,"Call %s -h to see some help.\n", argv[0]);
      exit(1);
   }
-  
+
   if (outfile) {
      fp = fopen(out_filename,"w"); // sent to a file
      if (fp == NULL){
@@ -438,10 +402,10 @@ int main(int argc, char**argv) {
   struct sockaddr_storage servaddr;
   socklen_t addr_size;
   bzero(&servaddr, sizeof(servaddr));
-  
+
   if (ipv6) {
     sockfd=socket(AF_INET6, SOCK_DGRAM, 0);
-    
+
     struct addrinfo hints;
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET6;
@@ -450,7 +414,7 @@ int main(int argc, char**argv) {
     int rv;
     if ((rv = getaddrinfo(hostname, NULL, &hints, &servinfo)) != 0) {
        fprintf(stderr,"Could not resolve hostname %s\n",hostname);
-       exit(1);      
+       exit(1);
     }
 
     memcpy(&servaddr, servinfo->ai_addr, servinfo->ai_addrlen);
@@ -461,8 +425,8 @@ int main(int argc, char**argv) {
     if (servinfo) freeaddrinfo(servinfo);
   } else {
     sockfd=socket(AF_INET, SOCK_DGRAM, 0);
-    
-    struct hostent * hp = gethostbyname(hostname); 
+
+    struct hostent * hp = gethostbyname(hostname);
     if (hp == NULL) {
        fprintf(stderr,"Could not resolve hostname %s\n",hostname);
        exit(1);
@@ -474,7 +438,7 @@ int main(int argc, char**argv) {
     addr_size = sizeof(*addr);
   }
   //  setsockopt(sockfd,SOL_SOCKET, SO_SNDBUF,&length,sizeof(int));
-   
+
   char outmsg[length];
   bzero(outmsg, sizeof(char)*length);
   send.seqnum = 0;
@@ -484,27 +448,27 @@ int main(int argc, char**argv) {
   interval.tv_usec = intusec - interval.tv_sec * 1e6;
 
   clear_stats();
- 
+
   //start_time = time(NULL);
   time(&start_time);
 
   // Print the RSSI - Received signal and noise power level in dBm of the selected interface
   bool inf_loop = true;
   while (inf_loop) {
-    struct timeval send_time;  
+    struct timeval send_time;
     gettimeofday(&send_time,NULL);
     send.sent_time.tv_sec = send_time.tv_sec;
     send.sent_time.tv_usec = send_time.tv_usec;
-    
+
     bcopy(&send, &outmsg, sizeof(header)); // copy header contents to payload
-  
+
     #ifdef VERBOSE
       printf("Sending packet number %d\n",send.seqnum);
     #endif
     send.seqnum++;
     sent++;
     int success = sendto(sockfd, outmsg, sizeof(char)*length, 0, (struct sockaddr *)&servaddr, addr_size);
-    
+
     if(success == -1 && errno != 55) {
       // Error number 55 is "no space available". In this case, we just wait
       // for packets during the interval...
@@ -512,18 +476,18 @@ int main(int argc, char**argv) {
       perror("");
       exit(1);
     }
-     
+
     struct timeval timeout, last_wait;
     timeout.tv_sec = interval.tv_sec;
     timeout.tv_usec = interval.tv_usec;
-          
+
     // *select* waiting until next packet timeout
     double toutdouble = 0;
     do {
 
       gettimeofday(&last_wait, NULL);
 
-      //select during specificed interval      
+      //select during specificed interval
       fd_set socketReadSet;
       FD_ZERO(&socketReadSet);
       FD_SET(sockfd,&socketReadSet);
@@ -535,7 +499,7 @@ int main(int argc, char**argv) {
       struct timeval copy;
       copy.tv_sec = timeout.tv_sec;
       copy.tv_usec = timeout.tv_usec;
-    
+
       int retVal = select(sockfd+1, &socketReadSet, 0, 0, &copy);
       #ifdef DEBUG
         printf("Timeout after select: %.6lu.%.6lu\n",timeout.tv_sec,timeout.tv_usec);
@@ -546,20 +510,20 @@ int main(int argc, char**argv) {
       timeval_subtract(&diff, &tfinish, &tstart);
       struct timeval temp;
       timeval_subtract(&temp, &timeout, &diff);
-      
+
       timeout.tv_sec = temp.tv_sec;
       timeout.tv_usec = temp.tv_usec;
 
       toutdouble = getTV(&timeout);
-        
+
       if(retVal > 0) {
           recvfrom(sockfd, &recv, sizeof(recv), 0, NULL, NULL);
-          make_accounting(&recv, csv, fp);
+          make_accounting(&recv, csv, cpu_usage, rssi, fp);
           #ifdef VERBOSE
             printf("Received Reply from packet %d\n", recv.seqnum);
           #endif
       }
-      make_accounting(NULL, csv, fp);
+      make_accounting(NULL, csv, cpu_usage, rssi, fp);
     } while(toutdouble > 0);
     time_t  just_now;
     time(&just_now);
@@ -568,6 +532,7 @@ int main(int argc, char**argv) {
     if ((duration > 0) && (dif_t >= duration )) {
       inf_loop = false;
     }
-    
+
   }
+  close_wireless_info();
 }

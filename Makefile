@@ -10,7 +10,7 @@ dir_guard=@mkdir -p $(DST)
 CFLAGS=-g -Wall --std=gnu99 -Ofast -lm
 #FLAGS=-DCPU_INFO
 
-OBJS=$(DST)/cpu_info.o 
+OBJS=$(DST)/cpu_info.o $(DST)/wireless.o
 
 all: client server
 

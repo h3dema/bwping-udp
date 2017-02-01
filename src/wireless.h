@@ -32,27 +32,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __PING_H__
-#define __PING_H__
-
-#define BWPING_VERSION "1.0.1"
-
-#define DEFAULT_MINIMUM_PAYLOAD_SIZE 64
-#define MAX_INTF_NAME 32
-
-typedef struct {
-    uint64_t tv_sec, tv_usec;
-} timeval_field;
+#ifndef __WIRELESS_H__
+#define __WIRELESS_H__
 
 
-typedef struct {
-    uint32_t seqnum;
-    timeval_field sent_time;
-    double idle_time_perc, non_idle_time_perc;
-    char intfname[MAX_INTF_NAME];
-    double link;
-    double level;
-    double noise;
-} header;
+int open_wireless_info(char * wlan_if);
+void close_wireless_info(void);
+
+/**
+  @return negative value if an error happened
+  */
+int get_rssi(double * link, double * level, double * noise);
+
 
 #endif
