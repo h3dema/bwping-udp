@@ -15,7 +15,7 @@
     -p port | server UDP port to listen to, default = 5001 (UDP LISTENING on -p port)
     -d | run server as a daemon 
     -6 | connect using IPv6
-    -s wlan-if | print received signal and noise power in dBm of interface wlan-if
+    -s wlan-if | collect received signal and noise power in dBm of interface wlan-if
 Miscellaneous | |
     -q | quiet
     -h | print this help message and quit

@@ -7,7 +7,7 @@
 **bwping-client** is part of a client-server tool for measuring bandwidth and response times between two hosts using UDP request/reply mechanism. It requires a client and a server program.
 
 ##USAGE
-**Usage**: bwping-client -a &lt;IP address\> [-p &lt;port>] [-l &lt;length>] [-t &lt;interval_in_us>] [-d &lt;duration>] [-c] [-h] [-v] [-s wlan-if] [-r]
+**Usage**: bwping-client -a &lt;IP address\> [-p &lt;port>] [-l &lt;length>] [-t &lt;interval_us>] [-d &lt;duration>] [-c] [-h] [-v] [-s wlan-if] [-r]
 
 | Parameter | Description |
 ---| ---|
