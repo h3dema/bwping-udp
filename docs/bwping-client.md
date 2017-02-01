@@ -29,7 +29,9 @@ Miscellaneous |
 ###Notes:
 
   * Comma Separated Values  option prints the following fields in each line, one line per sample:
-  YYYYMMDDHHMMSS, tv_sec.tv_usec, bw, delay, delay_s, jitter, jitter_s, loss, packets_sent, packets_recv, total_sent, total_rcvd, total_diff, cpuidle_t_local, cpu_nonidle_t_local, cpuidle_t_remote, cpu_nonidle_t_remote
+  YYYYMMDDHHMMSS, tv_sec.tv_usec, bw, delay, delay_s, jitter, jitter_s, loss, packets_sent, packets_recv, total_sent, total_rcvd, total_diff
+  [, cpuidle_t_local, cpu_nonidle_t_local, cpuidle_t_remote, cpu_nonidle_t_remote]
+  [, link_quality_local, signal_local, noise_local, link_quality_remote, signal_remote, noise_remote]
 
   * *delay* and *jitter* are shown in seconds
 
