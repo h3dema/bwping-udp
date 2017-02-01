@@ -38,8 +38,6 @@
 #define BWPING_VERSION "1.0.1"
 
 #define DEFAULT_MINIMUM_PAYLOAD_SIZE 64
-/** the maximum interface name should be equal to 16 to keep the payload equal to 64 bytes*/
-#define MAX_INTF_NAME 16
 
 typedef struct {
     uint64_t tv_sec, tv_usec;
@@ -50,7 +48,6 @@ typedef struct {
     uint32_t seqnum;
     timeval_field sent_time;
     float idle_time_perc, non_idle_time_perc;
-    char intfname[MAX_INTF_NAME];
     float link;
     float level;
     float noise;

@@ -121,7 +121,6 @@ void run(bool daemon_mode, int port, int length, bool quiet, bool ipv6, bool rss
 
         // RSSI info
         if (rssi) {
-          strncpy((char *)&recv->intfname, wlan_if, MAX_INTF_NAME);
           get_rssi(&recv->link, &recv->level, &recv->noise);
         }
 
@@ -154,8 +153,7 @@ int main(int argc, char**argv) {
    bool ipv6 = false;
    bool rssi = false;
 
-   char wlan_if[MAX_INTF_NAME];
-   wlan_if[0] = '\0';
+   char * wlan_if = NULL;
 
    while ((c = getopt(argc, argv, "p:l:s:6qdhv")) != -1) {
        switch(c){
@@ -181,8 +179,8 @@ int main(int argc, char**argv) {
           case 's':
             rssi = true;
             int err;
-            strncpy((char *)&wlan_if, optarg, MAX_INTF_NAME);
-            if ((err = open_wireless_info((char *)&wlan_if)) < 0) {
+            wlan_if = optarg;
+            if ((err = open_wireless_info(wlan_if)) < 0) {
               switch (err) {
                 case -1:
                   fprintf(stderr,"Info about wireless interface not found! Please check right wlan interface name.\n");
@@ -209,6 +207,6 @@ int main(int argc, char**argv) {
 
    if ((!daemon_mode) || (daemon(1, 1)==0))  {
      // daemon: don't change directory, don't redirect output
-     run(daemon_mode, port, length, quiet, ipv6, rssi, (char *)&wlan_if);
+     run(daemon_mode, port, length, quiet, ipv6, rssi, wlan_if);
    }
 }
