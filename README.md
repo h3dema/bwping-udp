@@ -51,7 +51,7 @@ Report bugs to <damacedo@dcc.ufmg.br>
   * output in JSON format
   * set CPU affinity
   * format to print bandwidth numbers in (Kbits/sec, Kbytes/sec, Mbits/sec, MBytes/sec)
-  * capture the signal and noise in the wireless interface
+  * capture the signal and noise in the wireless interface at the AP
 
 
 ##AUTHORS
