@@ -47,8 +47,7 @@ Miscellaneous |
 
   * signal_local, noise_local, signal_remote, noise_remote are in dBm
 
-
-   * **bwping-client** with no -d duration runs forever!
+  * **bwping-client** with no -d duration runs forever!
 
 ##SEE ALSO
 **[bwping-server](https://github.com/h3dema/bwping-udp/blob/master/docs/bwping-server.md)**
