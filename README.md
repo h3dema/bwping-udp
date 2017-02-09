@@ -45,6 +45,7 @@ Report bugs to <damacedo@dcc.ufmg.br>
 
 ## Features Wish List
 
+  * Implement slow-start + congestion avoidance mechanisms to measure full bandwidth of a link
   * Parallel streams
   * Reverse test mode – Server sends, client receives
   * Set target bandwidth to n bits/sec
