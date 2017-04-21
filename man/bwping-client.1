@@ -17,12 +17,12 @@ Usage: bwping-client -a <IP address> [-p <port>] [-l <length>] [-t <interval_us>
     -d duration: total execution time in seconds - Number of collected samples = duration/interval
     -i interval: time between periodic bandwidth reports in seconds - default 1 second
     -o outfile : record output to file name outfile - overwrite
-    -s wlan-if : print received signal and noise power in dBm of interface wlan-if
+    -s wlan-if : print received signal and noise power in dBm of interface wlan-if (don't work for APs)
     -r         : print CPU idle and non-idle times
     -6         : connect using IPv6 - default connect with IPv4
     -c         : output in CSV format - Comma Separated Values
                  print the following fields in each line, one line per sample
-                 YYYYMMDDHHMMSS, tv_sec.tv_usec, bw, delay, delay_s, jitter, jitter_s, loss, packets_sent, packets_recv, total_sent, total_rcvd, total_diff, 
+                 YYYYMMDDHHMMSS, tv_sec.tv_usec, bw, delay, delay_s, jitter, jitter_s, loss, packets_sent, packets_recv, total_sent, total_rcvd, total_diff,
                  [cpuidle_t_local, cpu_nonidle_t_local, cpuidle_t_remote, cpu_nonidle_t_remote]
                  [link_quality_local, signal_local, noise_local, link_quality_remote, signal_remote, noise_remote]
 
