@@ -43,11 +43,14 @@ See More Information
 **[bwping-server](https://github.com/h3dema/bwping-udp/blob/master/docs/bwping-server.md)**
 
 
-## BUGS
+BUGS
+-------
+
 No known bugs.
 Report bugs to <damacedo@dcc.ufmg.br>
 
-## Features Wish List
+Features Wish List
+-------
 
   * Implement slow-start + congestion avoidance mechanisms to measure full bandwidth of a link
   * Parallel streams
@@ -59,7 +62,8 @@ Report bugs to <damacedo@dcc.ufmg.br>
   * capture the signal and noise in the wireless interface at the AP
 
 
-##AUTHORS
+AUTHORS
+-------
 Daniel Macedo (damacedo@dcc.ufmg.br)
 
 Erik de Britto e Silva (erikbritto@gmail.com)
@@ -67,7 +71,8 @@ Erik de Britto e Silva (erikbritto@gmail.com)
 Henrique Moura (henriquemoura@hotmail.com)
 
 
-##Licensing and Liability
+Licensing and Liability
+-------
 
 
 THIS SOFTWARE IS PROVIDED BY THE [UFMG/DCC/WINET](http://www.winet.dcc.ufmg.br/) AND CONTRIBUTORS ''AS
