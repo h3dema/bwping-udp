@@ -21,9 +21,9 @@ USAGE
 -d | run server as a daemon 
 -s wlan-if | collect received signal and noise power in dBm of interface wlan-if
 Miscellaneous | |
-    -q | quiet
-    -h | print this help message and quit
-    -v | print version information and quit
+-q | quiet
+-h | print this help message and quit
+-v | print version information and quit
 
 SEE ALSO
 -------
