@@ -1,7 +1,6 @@
 # bwping-udp
-=========
 
-##About
+About
 -------
 
 **bwping-udp** is a tool for wireless performance measurement. It was
@@ -12,7 +11,8 @@ on ordinary Ethernet, fiber optics and even sattelite links between two
 hosts. The payload can be set to jumbo frame size up to more than 9000 bytes if needed.
 
 
-##For the impatient
+For the impatient
+-------
 
 Download the source files using **git clone** or download the zip file from github.
 
@@ -35,7 +35,9 @@ To get help, run:
 % man bwping-server
 ```
 
-## See More Information
+See More Information
+-------
+
 **[bwping-client](https://github.com/h3dema/bwping-udp/blob/master/docs/bwping-client.md)**
 
 **[bwping-server](https://github.com/h3dema/bwping-udp/blob/master/docs/bwping-server.md)**
