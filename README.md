@@ -1,6 +1,7 @@
 # bwping-udp
 
 ##About
+-------
 
 **bwping-udp** is a tool for wireless performance measurement. It was
 developed in the WINET laboratory (http://www.winet.dcc.ufmg.br) at
