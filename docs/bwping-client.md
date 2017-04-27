@@ -38,11 +38,11 @@ Miscellaneous |
   [, cpuidle_t_local, cpu_nonidle_t_local, cpuidle_t_remote, cpu_nonidle_t_remote]
   [, link_quality_local, signal_local, noise_local, link_quality_remote, signal_remote, noise_remote]
 
-  * *delay* and *jitter* are shown in seconds
+  * *delay* and *jitter* are shown in seconds, with a resolution of microseconds.
 
-  * *loss* is shown in percentage
+  * *loss* is shown in percentage.
 
-  * *bw* (bandwidth) is shown in bytes per second (Bps)
+  * *bw* (bandwidth) is shown in bytes per second (Bps). Bwping-udp uses a long long int variable to compute the bandwidh, so it is capable of containing at least the [−9,223,372,036,854,775,807 , +9,223,372,036,854,775,807] range.
 
   * *packets_sent* and *packets_recv* are the number of packets sent and received in the sample period
 
