@@ -14,7 +14,8 @@ USAGE
 **Usage**: bwping-server [-l &lt;length>] [-p &lt;port>] [-6] [-d] [-q] [-h] [-v] [-s wlan-if] 
 
 | Parameter | Description |
-|---| ---|
+---| ---|
+-6 | connect using IPv6 - default connect with IPv4 |
     -l length | payload byte length of each packet (see RFC 2544 - 64, 128, 256, 512, 1024, 1280 and 1518 bytes)
     -p port | server UDP port to listen to, default = 5001 (UDP LISTENING on -p port)
     -d | run server as a daemon 
