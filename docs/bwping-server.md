@@ -1,12 +1,16 @@
-#bwping-server
+bwping-server
+=======
 
-##About
+About
+-------
 **bwping-server** - The bwping server side tool for measuring maximum UDP bandwidth
 
-##DESCRIPTION
+DESCRIPTION
+-------
 **bwping-server** is part of a client-server tool for measuring bandwidth and response times between two hosts using UDP request/reply mechanism. It requires a client and a server program.
 
-##USAGE
+USAGE
+-------
 **Usage**: bwping-server [-l &lt;length>] [-p &lt;port>] [-6] [-d] [-q] [-h] [-v] [-s wlan-if] 
 
 | Parameter | Description |
@@ -21,14 +25,17 @@ Miscellaneous | |
     -h | print this help message and quit
     -v | print version information and quit
 
-##SEE ALSO
+SEE ALSO
+-------
 **[bwping-client](https://github.com/h3dema/bwping-udp/blob/master/docs/bwping-client.md)**
 
-##BUGS
+BUGS
+-------
 No known bugs.
 Report bugs to <damacedo@dcc.ufmg.br>
 
-##AUTHORS
+AUTHORS
+-------
 Daniel Macedo ([damacedo@dcc.ufmg.br](damacedo@dcc.ufmg.br))
 
 Erik de Britto e Silva (erikbritto@gmail.com)
