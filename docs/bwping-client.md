@@ -1,4 +1,6 @@
-#bwping-client
+bwping-client
+=========
+
 
 ##About
 **bwping-client** - The bwping client side tool for measuring maximum UDP bandwidth
