@@ -7,7 +7,9 @@ MAN=./man
 
 dir_guard=@mkdir -p $(DST)
 
-CFLAGS=-g -Wall --std=gnu99 -Ofast -lm
+CFLAGS=-g -Wall --std=gnu99 -lm
+#  -Ofast cannot be used with openwrt, please comment the following line
+CFLAGS+=-Ofast
 #FLAGS=-DCPU_INFO
 
 OBJS=$(DST)/cpu_info.o $(DST)/wireless.o
