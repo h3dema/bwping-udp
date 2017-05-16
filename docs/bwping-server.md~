@@ -16,7 +16,7 @@ USAGE
 | Parameter | Description |
 ---| ---|
 -6 | connect using IPv6 - default connect with IPv4 |
--l length | payload byte length of each packet (see RFC 2544 - 64, 128, 256, 512, 1024, 1280 and 1518 bytes). This value should be greater than or equal to the same parameter chosen in bwping-client
+-l length | payload byte length of each packet (see RFC 2544 - 64, 128, 256, 512, 1024, 1280 and 1518 bytes)
 -p port | server UDP port to listen to, default = 5001 (UDP LISTENING on -p port)
 -d | run server as a daemon 
 -s wlan-if | collect received signal and noise power in dBm of interface wlan-if

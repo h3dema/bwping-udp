@@ -19,13 +19,13 @@ USAGE
 -a ip   | server IPv4 address (required) |
 -c | output in CSV (Comma Separated Values ) format  |
 -d duration | total execution time in seconds - Number of collected samples = duration/interval |
--i interval | time between periodic bandwidth reports in seconds - default 1 second - minimum 0.01 seconds (=10ms). This value should be entered as a float in seconds, e.g enter 0.5 to get a report each 0.5 seconds (500ms) |
+-i interval | time between periodic bandwidth reports in seconds - default 1 second - minimum 0.01 seconds (=10ms) |
 -l length  | payload byte length of each packet  (see RFC 2544 - 64, 128, 256, 512, 1024, 1280 and 1518 bytes) |
 -o outfile | record output to file name outfile - overwrite |
 -p port | server UDP port in use , default = 5001 |
 -s wlan-if | print received signal and noise power in dBm of interface wlan-if
 -r | print CPU idle and non-idle times
--t interval | time between **bwping-udp** requests in microseconds - default 10 miliseconds. This value should be entered as a integer in microseconds, e.g to make a request each 20 ms, you should enter 20000. |
+-t interval | time between **bwping-udp** requests in microseconds - default 10 miliseconds |
 Miscellaneous |
 -h | print this help message and quit |
 -v | print version information and quit |
