@@ -87,23 +87,32 @@ unsigned long long sent, recvd;
 long double idle_lt_m, nidle_lt_m, idle_rt_m, nidle_rt_m;
 long double link_m, level_m, noise_m;
 
+struct timeval next_print;
 
-struct timeval last_print;
+struct timeval print_interval; // time between reports
 
-uint32_t print_interval;
+#define MICROSECONDS 1000000
+
+void timeval_add (result, x, y)
+   struct timeval *result, *x, *y;
+{
+    long nsec = y->tv_usec + x->tv_usec;
+    result->tv_usec = nsec % MICROSECONDS;
+    result->tv_sec = y->tv_sec + x->tv_sec + nsec / MICROSECONDS;
+}
 
 int timeval_subtract (result, x, y)
    struct timeval *result, *x, *y;
 {
   /* Perform the carry for the later subtraction by updating y. */
   if (x->tv_usec < y->tv_usec) {
-    long nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
-    y->tv_usec -= 1000000 * nsec;
+    long nsec = (y->tv_usec - x->tv_usec) / MICROSECONDS + 1;
+    y->tv_usec -= MICROSECONDS * nsec;
     y->tv_sec += nsec;
   }
-  if (x->tv_usec - y->tv_usec > 1000000) {
-    long nsec = (x->tv_usec - y->tv_usec) / 1000000;
-    y->tv_usec += 1000000 * nsec;
+  if (x->tv_usec - y->tv_usec > MICROSECONDS) {
+    long nsec = (x->tv_usec - y->tv_usec) / MICROSECONDS;
+    y->tv_usec += MICROSECONDS * nsec;
     y->tv_sec -= nsec;
   }
 
@@ -129,15 +138,16 @@ void clear_stats() {
   recvd = 0;
   idle_lt_m = nidle_lt_m = idle_rt_m = nidle_rt_m = 0; // clear cpu times
   link_m = level_m = noise_m = 0; // wireless info
-  gettimeofday(&last_print,NULL);
+
+  gettimeofday(&next_print,NULL);
+  timeval_add(&next_print, &next_print, &print_interval);
 }
 
-void make_accounting(header *hdr, bool csv, bool cpu_usage, bool rssi, FILE * fp) {
+void make_accounting(header *hdr, bool cpu_usage, bool rssi) {
 
   struct timeval now, diff;
   gettimeofday(&now, NULL);
 
-  if(hdr != NULL) {
     struct timeval hdr_time;
     hdr_time.tv_sec = hdr->sent_time.tv_sec;
     hdr_time.tv_usec = hdr->sent_time.tv_usec;
@@ -175,14 +185,26 @@ void make_accounting(header *hdr, bool csv, bool cpu_usage, bool rssi, FILE * fp
     }
 
     lastdelay = delay;
-  }
+ }
 
-  if(now.tv_sec >= last_print.tv_sec + print_interval) {
+void report(bool csv, bool cpu_usage, bool rssi, FILE * fp) {
+  struct timeval now;
+  gettimeofday(&now, NULL);
+
+  // struct timeval add_t;
+  // timeval_add(&add_t, &last_print, &print_interval);
+
+  // // check if it is time to print the report
+  // if ((now.tv_sec > add_t.tv_sec) || ((now.tv_sec = add_t.tv_sec) && (now.tv_usec > add_t.tv_usec)) ) {
+  //    printf("last_print\tsec %d usec : %d | print_interval sec %d usec : %d\n", (int)last_print.tv_sec, (int)last_print.tv_usec, (int)print_interval.tv_sec, (int)print_interval.tv_usec);
+  //    printf("add_t\t\tsec %d usec : %d \nnow\t\tsec %d usec : %d\n", (int)add_t.tv_sec, (int)add_t.tv_usec, (int)now.tv_sec, (int)now.tv_usec);
+  //   // contador++;
+
+  if ((now.tv_sec >= next_print.tv_sec) && (now.tv_usec >= next_print.tv_usec)) {
     //time to print the variables...
-    last_print.tv_sec = now.tv_sec;
+    timeval_add(&next_print, &now, &print_interval);
 
     double jitter,jitter_sq, delay, delay_sq;
-
 
     if(recvd > 0) {
       double inv_n = 1 / (double)recvd;
@@ -274,7 +296,6 @@ void make_accounting(header *hdr, bool csv, bool cpu_usage, bool rssi, FILE * fp
              (1900+ti->tm_year), (1+ti->tm_mon), ti->tm_mday, ti->tm_hour, ti->tm_min, ti->tm_sec,
              now.tv_sec,now.tv_usec, bw, delay,delay_s, jitter, jitter_s, loss, sent, recvd, global_sent, global_rcvd , diff_pct, cpu_i, rssi_i);
     } else {
-
       fprintf(fp,"%.6lu.%.6lu BWPING: Bw %llu bps Delay (%f,%f)s Jitter (%f,%f)s Loss %.2lf%% LSent %llu LRecv %llu TSent %d Trcvd %d TDiff %.0lf %s%s[%04d%02d%02d%02d%02d%02d]\n",
               now.tv_sec,now.tv_usec, bw, delay,delay_s, jitter, jitter_s, loss,
               sent, recvd, global_sent, global_rcvd, diff_pct, cpu_i, rssi_i,
@@ -283,11 +304,7 @@ void make_accounting(header *hdr, bool csv, bool cpu_usage, bool rssi, FILE * fp
     }
     clear_stats();
   }
-
 }
-
-
-
 
 void version(char ** argv) {
   printf("%s version %s\n", argv[0], BWPING_VERSION);
@@ -341,7 +358,9 @@ int main(int argc, char**argv) {
   int port = 5001;
   long long int intusec = 10000; // 10ms
 
-  print_interval = 1; // print each second
+  // default: print each second
+  print_interval.tv_sec = 1;
+  print_interval.tv_usec = 0;
 
   int c = 0;
   char * hostname = NULL;
@@ -367,17 +386,21 @@ int main(int argc, char**argv) {
         sscanf(optarg,"%s",out_filename);
         outfile = true;
         break;
-      case 'i':
-        sscanf(optarg,"%d",&print_interval);
-        if (print_interval < 1) print_interval = 1;
+      case 'i': {
+        float print_time;
+        sscanf(optarg,"%f",&print_time);
+        if (print_time < 0.01) print_time = 0.01; // if error or less then 10ms, sets to 10ms
+        print_interval.tv_sec = (int) trunc(print_time);
+        print_interval.tv_usec = (int) trunc((print_time - print_interval.tv_sec)*1000)*1000; // in microseconds
         break;
+      }
       case 's':
         rssi = true;
         int err;
         if ((err = open_wireless_info(optarg)) < 0) {
           switch (err) {
             case -1:
-              fprintf(stderr,"Info about wireless interface not found! Please check right wlan interface name.\n");
+              fprintf(stderr,"Info about wireless interface not found! Please check the wlan interface name.\n");
               break;
             case -2:
             case -3:
@@ -543,16 +566,15 @@ int main(int argc, char**argv) {
 
       if(retVal > 0) {
           recvfrom(sockfd, &recv, sizeof(recv), 0, NULL, NULL);
-          make_accounting(&recv, csv, cpu_usage, rssi, fp);
+          make_accounting(&recv, cpu_usage, rssi);
           #ifdef VERBOSE
             printf("Received Reply from packet %d\n", recv.seqnum);
           #endif
       }
-      make_accounting(NULL, csv, cpu_usage, rssi, fp);
+      report(csv, cpu_usage, rssi, fp); // report information
     } while(toutdouble > 0);
     time_t  just_now;
     time(&just_now);
-    //double dif_t = difftime(time(NULL), start_time);
     double dif_t = difftime(just_now, start_time);
     if ((duration > 0) && (dif_t >= duration )) {
       inf_loop = false;

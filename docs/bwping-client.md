@@ -19,7 +19,7 @@ USAGE
 -a ip   | server IPv4 address (required) |
 -c | output in CSV (Comma Separated Values ) format  |
 -d duration | total execution time in seconds - Number of collected samples = duration/interval |
--i interval | time between periodic bandwidth reports in seconds - default 1 second |
+-i interval | time between periodic bandwidth reports in seconds - default 1 second - minimum 0.01 seconds (=10ms) |
 -l length  | payload byte length of each packet  (see RFC 2544 - 64, 128, 256, 512, 1024, 1280 and 1518 bytes) |
 -o outfile | record output to file name outfile - overwrite |
 -p port | server UDP port in use , default = 5001 |

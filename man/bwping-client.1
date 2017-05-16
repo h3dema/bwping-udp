@@ -15,7 +15,7 @@ Usage: bwping-client -a <IP address> [-p <port>] [-l <length>] [-t <interval_us>
                  (see RFC 2544 - 64, 128, 256, 512, 1024, 1280 and 1518 bytes)
     -t interval: time between bwping requests in microseconds - default 10 milissecond
     -d duration: total execution time in seconds - Number of collected samples = duration/interval
-    -i interval: time between periodic bandwidth reports in seconds - default 1 second
+    -i interval: time between periodic bandwidth reports in seconds - default 1 second - minimum 0.01 seconds (=10ms)
     -o outfile : record output to file name outfile - overwrite
     -s wlan-if : print received signal and noise power in dBm of interface wlan-if (don't work for APs)
     -r         : print CPU idle and non-idle times
