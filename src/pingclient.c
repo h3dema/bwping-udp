@@ -318,7 +318,7 @@ void usage(char ** argv) {
   printf("\t-l length  : payload byte length of each packet\n");
   printf("\t-t interval: time between bwping requests in microseconds - default 10 ms\n");
   printf("\t-d duration: total execution time in seconds - Number of collected samples = duration/interval\n");
-  printf("\t-i interval: time between periodic bandwidth reports in seconds - default 1 second\n");
+  printf("\t-i interval: time between periodic bandwidth reports in seconds - default 1 second - minimum 0.01 seconds (=10ms)\n");
   printf("\t-o outfile : record output to file name outfile - overwrite \n");
   printf("\t-s wlan-if : print received signal and noise power in dBm of interface wlan-if (don't work with APs)\n");
   printf("\t-r         : print CPU idle and non-idle times\n");
