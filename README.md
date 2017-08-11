@@ -7,7 +7,7 @@ About
 developed in the WINET laboratory (http://www.winet.dcc.ufmg.br) at
 UFMG to collect metrics relevant to wireless links that are
 not collected by classic tools (i.e. Iperf and others). **bwping-udp** can be used
-on ordinary Ethernet, fiber optics and even sattelite links between two
+on ordinary Ethernet, IEEE 802.11 wireless links, fiber optics and even sattelite links between two
 hosts. The payload can be set to jumbo frame size up to more than 9000 bytes if needed.
 
 
@@ -25,7 +25,7 @@ To compile and install bwping, simply run:
 
 ```sh
 % make
-% make install
+% sudo make install
 ```
 
 To get help, run:
@@ -52,14 +52,14 @@ Report bugs to <damacedo@dcc.ufmg.br>
 Features Wish List
 -------
 
-  * Implement slow-start + congestion avoidance mechanisms to measure full bandwidth of a link
+  * Implement slow-start + congestion avoidance mechanisms in UDP to measure full bandwidth of a link
   * Parallel streams
   * Reverse test mode – Server sends, client receives
   * Set target bandwidth to n bits/sec
-  * output in JSON format
-  * set CPU affinity
-  * format to print bandwidth numbers in (Kbits/sec, Kbytes/sec, Mbits/sec, MBytes/sec)
-  * capture the signal and noise in the wireless interface at the AP
+  * Output in JSON format
+  * Set CPU affinity
+  * Format to print bandwidth numbers in (Kbits/sec, Kbytes/sec, Mbits/sec, MBytes/sec)
+  * Capture the signal and noise in the wireless interface at the AP
 
 
 AUTHORS

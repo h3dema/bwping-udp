@@ -25,7 +25,7 @@ USAGE
 -p port | server UDP port in use , default = 5001 |
 -s wlan-if | print received signal and noise power in dBm of interface wlan-if
 -r | print CPU idle and non-idle times
--t interval | time between **bwping-udp** requests in microseconds - default 10 miliseconds. This value should be entered as a integer in microseconds, e.g to make a request each 20 ms, you should enter 20000. |
+-t interval | time between **bwping-udp** requests in microseconds - default 10 miliseconds. This value should be entered as an integer in microseconds, e.g to make a request each 20 ms, you should enter 20000. |
 Miscellaneous |
 -h | print this help message and quit |
 -v | print version information and quit |
