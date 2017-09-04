@@ -39,6 +39,8 @@ Miscellaneous |
   [, link_quality_local, signal_local, noise_local, link_quality_remote, signal_remote, noise_remote]
 
   * *delay* and *jitter* are shown in seconds, with a resolution of microseconds.
+  
+  * *delay_s* and *jitter_s* are the standard deviation of the delay and jitter, respectiveely. They area also shown in seconds, with a resolution of microseconds.
 
   * *loss* is shown in percentage.
 
