@@ -294,12 +294,12 @@ void report(bool csv, bool cpu_usage, bool rssi, FILE * fp) {
     if (csv) {
       fprintf(fp,"%04d%02d%02d%02d%02d%02d, %.6lu.%.6lu, %llu, %f, %f, %f, %f, %lf, %llu, %llu, %d, %d, %.0lf%s%s\n",
              (1900+ti->tm_year), (1+ti->tm_mon), ti->tm_mday, ti->tm_hour, ti->tm_min, ti->tm_sec,
-             now.tv_sec,now.tv_usec, bw, delay,delay_s, jitter, jitter_s, loss, sent, recvd, global_sent, global_rcvd , diff_pct, cpu_i, rssi_i);
+             now.tv_sec, now.tv_usec, bw, delay,delay_s, jitter, jitter_s, loss, sent, recvd, global_sent, global_rcvd , diff_pct, cpu_i, rssi_i);
     } else {
-      fprintf(fp,"%.6lu.%.6lu BWPING: Bw %llu bps Delay (%f,%f)s Jitter (%f,%f)s Loss %.2lf%% LSent %llu LRecv %llu TSent %d Trcvd %d TDiff %.0lf %s%s[%04d%02d%02d%02d%02d%02d]\n",
-              now.tv_sec,now.tv_usec, bw, delay,delay_s, jitter, jitter_s, loss,
-              sent, recvd, global_sent, global_rcvd, diff_pct, cpu_i, rssi_i,
-              (1900+ti->tm_year), (1+ti->tm_mon), ti->tm_mday, ti->tm_hour, ti->tm_min, ti->tm_sec);
+      fprintf(fp,"[%04d%02d%02d%02d%02d%02d]%.6lu.%.6lu BWPING: Bw %llu bps Delay (%f,%f)s Jitter (%f,%f)s Loss %.2lf%% LSent %llu LRecv %llu TSent %d Trcvd %d TDiff %.0lf %s%s\n",
+              (1900+ti->tm_year), (1+ti->tm_mon), ti->tm_mday, ti->tm_hour, ti->tm_min, ti->tm_sec,
+              now.tv_sec, now.tv_usec, bw, delay,delay_s, jitter, jitter_s, loss,
+              sent, recvd, global_sent, global_rcvd, diff_pct, cpu_i, rssi_i);
       fflush(fp);
     }
     clear_stats();
